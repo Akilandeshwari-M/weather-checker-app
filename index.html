@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Is It Raining?</title>
+    <link rel="stylesheet" href="file.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Is it raining in...</h1>
+        <input type="text" id="cityInput" placeholder="Enter city name..." autocomplete="off">
+        <button id="checkBtn">Check</button>
+
+        <div id="result"></div>
+        <div id="details"></div>
+    </div>
+
+    <script>
+        const checkBtn = document.getElementById('checkBtn');
+        const cityInput = document.getElementById('cityInput');
+        const resultDiv = document.getElementById('result');
+        const detailsDiv = document.getElementById('details');
+
+        checkBtn.addEventListener('click', async () => {
+            const city = cityInput.value.trim();
+            if (!city) return;
+
+            // Clear previous text and reset animation classes
+            resultDiv.innerText = "Checking...";
+            detailsDiv.innerText = "";
+            resultDiv.className = "";
+            detailsDiv.className = "";
+
+            try {
+                const response = await fetch(`/weather?city=${city}`);
+                const data = await response.json();
+
+                // Tiny delay to let browser process the class reset, restarting animations
+                setTimeout(() => {
+                    if (data.raining) {
+                        resultDiv.innerText = "YES 🌧️";
+                    } else {
+                        resultDiv.innerText = "NO ☀️";
+                    }
+                    detailsDiv.innerText = `It is currently "${data.message}" in ${city}.`;
+
+                    // Trigger fade-in animations
+                    resultDiv.className = "fade-in";
+                    detailsDiv.className = "fade-in";
+                }, 50);
+
+            } catch (error) {
+                resultDiv.innerText = "Error";
+                detailsDiv.innerText = "Could not connect to the server.";
+                resultDiv.className = "fade-in";
+                detailsDiv.className = "fade-in";
+            }
+        });
+    </script>
+</body>
+</html>
