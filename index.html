@@ -5,127 +5,209 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather Checker</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            background-color: #f0f4f8;
         }
 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            background-color: #0f172a;
+            color: #ffffff;
+        }
+
+        /* Fullscreen Page Containers */
         .page {
-            display: none;
-            min-height: 100vh;
-            box-sizing: border-box;
-            padding: 40px 20px;
-        }
-
-        .active {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;
+            padding: 20px;
         }
 
-        /* Hero / Front Page Styling */
+        .page.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* PAGE 1: Stormy Lightning Background */
+        #page1 {
+            background: linear-gradient(rgba(15, 23, 42, 0.6), rgba(15, 23, 42, 0.7)),
+                        url('https://images.unsplash.com/photo-1511289081-d06283b7405e?q=80&w=1920&auto=format&fit=crop') center/cover no-repeat;
+            animation: stormZoom 20s infinite alternate ease-in-out, lightningFlash 8s infinite continuous;
+        }
+
+        @keyframes stormZoom {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.08); }
+        }
+
+        @keyframes lightningFlash {
+            0%, 92%, 96%, 100% { filter: brightness(1); }
+            93%, 95% { filter: brightness(1.7) contrast(1.2); }
+        }
+
+        /* PAGE 2: Sunny Sky Background */
+        #page2 {
+            background: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.35)),
+                        url('https://images.unsplash.com/photo-1534088568595-a066f410bcda?q=80&w=1920&auto=format&fit=crop') center/cover no-repeat;
+            animation: skyPan 25s continuous infinite alternate ease-in-out;
+        }
+
+        @keyframes skyPan {
+            0% { background-position: center top; }
+            100% { background-position: center bottom; }
+        }
+
+        /* Glassmorphism Hero Card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            text-align: center;
+            max-width: 450px;
+            width: 100%;
+            transform: translateY(20px);
+            animation: floatUp 0.8s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            to {
+                transform: translateY(0);
+            }
+        }
+
         .hero-title {
-            font-size: 3rem;
-            color: #1e293b;
-            margin-bottom: 10px;
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
 
         .hero-subtitle {
-            font-size: 1.2rem;
-            color: #64748b;
+            font-size: 1.1rem;
             margin-bottom: 30px;
+            color: #e2e8f0;
+            line-height: 1.5;
         }
 
+        /* Buttons */
         .btn {
-            background-color: #2563eb;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
             color: white;
             border: none;
-            padding: 12px 24px;
-            font-size: 1rem;
-            border-radius: 8px;
+            padding: 14px 28px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            border-radius: 10px;
             cursor: pointer;
-            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
         }
 
         .btn:hover {
-            background-color: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.6);
         }
 
-        /* Weather Page Styling */
-        .card {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            max-width: 400px;
-            width: 100%;
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: none;
+            margin-top: 15px;
         }
 
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Input Field */
         input {
-            width: 80%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
+            width: 100%;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        input::placeholder {
+            color: #cbd5e1;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 1.1rem;
+            font-weight: 500;
         }
     </style>
 </head>
 <body>
 
-    <!-- PAGE 1: Front / Landing Page -->
+    <!-- PAGE 1: Front Page (Lightning Storm Theme) -->
     <div id="page1" class="page active">
-        <h1 class="hero-title">Welcome to Weather Checker</h1>
-        <p class="hero-subtitle">Get real-time weather updates for your favorite cities around the globe.</p>
-        <button class="btn" onclick="showPage('page2')">Check Weather Now</button>
+        <div class="glass-card">
+            <h1 class="hero-title">Weather Checker</h1>
+            <p class="hero-subtitle">Get real-time weather forecasts and updates for cities worldwide.</p>
+            <button class="btn" onclick="showPage('page2')">Check Weather Now</button>
+        </div>
     </div>
 
-    <!-- PAGE 2: Weather Checker App Page -->
+    <!-- PAGE 2: Search Page (Sunny Sky Theme) -->
     <div id="page2" class="page">
-        <div class="card">
-            <h2>Weather Search</h2>
-            <input type="text" id="cityInput" placeholder="Enter city name (e.g., London)">
-            <br>
+        <div class="glass-card">
+            <h2 style="margin-bottom: 20px;">Search Weather</h2>
+            <input type="text" id="cityInput" placeholder="Enter city name (e.g., London, Hosur)">
             <button class="btn" onclick="getWeather()">Search</button>
-            <div id="result" style="margin-top: 20px;"></div>
+            <div id="result"></div>
             <br>
-            <button class="btn" style="background-color: #64748b;" onclick="showPage('page1')">← Back to Home</button>
+            <button class="btn btn-secondary" onclick="showPage('page1')">← Back to Home</button>
         </div>
     </div>
 
     <script>
-        // Function to toggle between views
         function showPage(pageId) {
             document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
         }
 
-        // Function to call your backend Express API
         async function getWeather() {
             const city = document.getElementById('cityInput').value.trim();
             const resultDiv = document.getElementById('result');
             
             if (!city) {
-                resultDiv.innerHTML = '<p style="color:red;">Please enter a city name.</p>';
+                resultDiv.innerHTML = '<p style="color: #fca5a5;">Please enter a city name.</p>';
                 return;
             }
 
-            resultDiv.innerHTML = 'Loading...';
+            resultDiv.innerHTML = '<p style="color: #93c5fd;">Fetching weather...</p>';
 
             try {
                 const response = await fetch(`/weather?city=${encodeURIComponent(city)}`);
                 const data = await response.json();
 
                 if (data.message) {
-                    resultDiv.innerHTML = `<p><strong>Condition:</strong> ${data.message}</p>`;
+                    resultDiv.innerHTML = `<p style="color: #6ee7b7;"><strong>Condition:</strong> ${data.message}</p>`;
                 } else {
-                    resultDiv.innerHTML = '<p style="color:red;">Could not fetch weather data.</p>';
+                    resultDiv.innerHTML = '<p style="color: #fca5a5;">Could not fetch weather data.</p>';
                 }
             } catch (err) {
-                resultDiv.innerHTML = '<p style="color:red;">Error connecting to server.</p>';
+                resultDiv.innerHTML = '<p style="color: #fca5a5;">Error connecting to server.</p>';
             }
         }
     </script>
