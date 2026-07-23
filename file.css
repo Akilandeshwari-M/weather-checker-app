@@ -5,123 +5,126 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Shifting Gradient Background Animation */
 body {
-    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-    background-size: 400% 400%;
-    animation: gradientBG 15s ease infinite;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: background-image 1s ease-in-out;
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
+    padding: 20px;
+    color: #333;
 }
 
-@keyframes gradientBG {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-
-/* Main Card Slide-In Entry Animation */
-.container {
-    background: rgba(255, 255, 255, 0.95);
-    padding: 3rem;
-    border-radius: 24px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-    text-align: center;
-    width: 100%;
-    max-width: 400px;
+.dashboard {
+    background: rgba(255, 255, 255, 0.92);
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    animation: cardEntrance 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-}
-
-@keyframes cardEntrance {
-    from {
-        opacity: 0;
-        transform: scale(0.8) translateY(50px);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
-}
-
-h1 {
-    font-size: 2rem;
-    color: #2c3e50;
-    margin-bottom: 1.5rem;
-    font-weight: 700;
-}
-
-/* Interactive Input */
-input[type="text"] {
     width: 100%;
+    max-width: 950px;
+    border-radius: 24px;
+    padding: 2rem;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+
+.search-box {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+input {
+    flex: 1;
+    min-width: 180px;
     padding: 12px 20px;
-    margin-bottom: 1.2rem;
     border: 2px solid #e2e8f0;
-    border-radius: 25px;
+    border-radius: 30px;
     font-size: 1rem;
     outline: none;
-    transition: all 0.3s ease;
 }
 
-input[type="text"]:focus {
-    border-color: #23a6d5;
-    box-shadow: 0 0 10px rgba(35, 166, 213, 0.5);
-    transform: translateY(-2px);
-}
-
-/* Animated Button with Glow & Hover Effects */
 button {
-    width: 100%;
-    padding: 12px;
-    background: linear-gradient(135deg, #23a6d5, #23d5ab);
+    padding: 12px 20px;
+    background: #2563eb;
     color: white;
     border: none;
-    border-radius: 25px;
-    font-size: 1rem;
-    font-weight: 600;
+    border-radius: 30px;
+    font-weight: bold;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(35, 166, 213, 0.3);
+    transition: 0.2s;
 }
 
-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(35, 166, 213, 0.5);
+button:hover { opacity: 0.9; transform: translateY(-1px); }
+
+.weather-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
 }
 
-button:active {
-    transform: translateY(-1px);
+@media (max-width: 768px) {
+    .weather-content { grid-template-columns: 1fr; }
 }
 
-#result {
-    margin-top: 1.5rem;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #2d3748;
+.column {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
-#details {
-    margin-top: 0.5rem;
-    font-size: 1rem;
-    color: #718096;
+.cards-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
 }
 
-/* Text Fade-In Animation */
-.fade-in {
-    animation: fadeIn 0.6s ease forwards;
+.card {
+    background: #f8fafc;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    text-align: center;
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.card h4 { font-size: 0.8rem; color: #64748b; }
+.card p { font-size: 1.1rem; font-weight: bold; color: #1e293b; margin-top: 4px; }
+
+/* Mascot Outfit Card */
+.smart-card {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    padding: 15px;
+    border-radius: 16px;
+}
+
+.mascot-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 5px;
+    background: #ffffff;
+    padding: 10px 15px;
+    border-radius: 12px;
+}
+
+.smart-card h3 { font-size: 1rem; color: #1d4ed8; margin-bottom: 8px; }
+.smart-card ul { list-style: none; }
+.smart-card li { font-size: 0.85rem; color: #1e40af; margin-bottom: 4px; }
+
+/* Spotify Card */
+.spotify-card {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    padding: 15px;
+    border-radius: 16px;
+}
+
+.spotify-card h3 { font-size: 0.95rem; color: #15803d; margin-bottom: 10px; }
+
+#map {
+    height: 200px;
+    width: 100%;
+    border-radius: 16px;
 }
