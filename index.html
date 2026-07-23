@@ -20,7 +20,7 @@
 
         <div id="statusMsg" style="text-align:center; font-weight:bold; margin-bottom:10px; color:#fff;"></div>
 
-        <div class="weather-content" id="weatherContent" style="display: none;">
+        <div class="weather-content" id="weatherContent">
             
             <!-- Left Column: Metrics & Toy Avatar -->
             <div class="column">
@@ -279,7 +279,9 @@
         }
 
         document.getElementById('searchBtn').addEventListener('click', () => fetchWeather(false));
+window.addEventListener('DOMContentLoaded',() => {
         fetchWeather(false);
+});
     </script>
 </body>
 </html>
