@@ -5,24 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Weather & Lifestyle Dashboard</title>
     <link rel="stylesheet" href="file.css">
-    <!-- Leaflet.js CSS for Maps -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 </head>
 <body id="bgBody">
 
     <div class="dashboard">
         <div class="search-box">
-            <input type="text" id="cityInput" placeholder="Enter city name..." value="Chennai">
+            <input type="text" id="cityInput" placeholder="Enter city name..." value="London">
             <button id="searchBtn">Search</button>
             <button id="voiceBtn" style="background: #8e44ad;">🎤 Ask AI Voice</button>
             <button id="notifyBtn" style="background: #e67e22;">Alerts 🔔</button>
         </div>
 
-        <div id="statusMsg" style="text-align:center; font-weight:bold; margin-bottom:10px; color:#fff;"></div>
+        <div id="statusMsg" style="text-align:center; font-weight:bold; margin-bottom:10px; color:#e11d48;"></div>
 
         <div class="weather-content" id="weatherContent">
-            
-            <!-- Left Column: Metrics & Toy Avatar -->
             <div class="column">
                 <h2 id="cityName">---</h2>
                 <h1 id="tempDisplay" style="font-size: 3rem; color: #2a5298;">--°C</h1>
@@ -35,7 +32,6 @@
                     <div class="card"><h4>Rainfall</h4><p id="rain">-- mm</p></div>
                 </div>
 
-                <!-- Mascot/Toy Outfit Avatar Card -->
                 <div class="smart-card">
                     <h3>🧸 Weather Mascot Outfit</h3>
                     <div class="mascot-container">
@@ -49,7 +45,6 @@
                 </div>
             </div>
 
-            <!-- Right Column: Interactive Map & Spotify Music -->
             <div class="column">
                 <h3>📍 Live Map</h3>
                 <div id="map"></div>
@@ -59,19 +54,15 @@
                     <div id="spotifyContainer"></div>
                 </div>
             </div>
-
         </div>
     </div>
 
-    <!-- Leaflet.js Script -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
         let map = null;
         let marker = null;
-        let currentCityData = null;
 
-        // Initialize Map
         function initMap(lat, lon, cityName) {
             if (!map) {
                 map = L.map('map').setView([lat, lon], 12);
@@ -86,22 +77,17 @@
             marker.bindPopup(`<b>${cityName}</b>`).openPopup();
         }
 
-        // Feature 1: Live Background Image Switcher
         function updateBackground(isRaining, temp) {
             const body = document.getElementById('bgBody');
             if (isRaining) {
-                // Rain background image
                 body.style.backgroundImage = "url('https://images.unsplash.com/photo-1519692933481-e162a57d6721?q=80&w=1600&auto=format&fit=crop')";
             } else if (temp > 28) {
-                // Sunny / Hot background image
                 body.style.backgroundImage = "url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1600&auto=format&fit=crop')";
             } else {
-                // Mild / Cool background image
                 body.style.backgroundImage = "url('https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?q=80&w=1600&auto=format&fit=crop')";
             }
         }
 
-        // Feature 2: Toy Mascot Outfit Generator
         function updateMascotOutfit(temp, wind, rain) {
             const avatar = document.getElementById('mascotAvatar');
             const title = document.getElementById('mascotDressName');
@@ -135,9 +121,7 @@
                 advice.push("👕 Perfect weather for a normal T-shirt.");
             }
 
-            if (wind > 20) {
-                advice.push("💨 High winds! Secure your hat.");
-            }
+            if (wind > 20) advice.push("💨 High winds! Secure your hat.");
 
             advice.forEach(item => {
                 const li = document.createElement('li');
@@ -146,24 +130,12 @@
             });
         }
 
-        // Feature 3: Working Spotify Embed Playlists
         function updateSpotifyPlaylist(isRaining, temp) {
             const container = document.getElementById('spotifyContainer');
             const title = document.getElementById('spotifyMoodTitle');
             
-            let playlistId = "";
-            let moodText = "";
-
-            if (isRaining) {
-                playlistId = "37i9dQZF1DXbvS33329OiJ"; 
-                moodText = "🌧️ Rainy Beats & Chill";
-            } else if (temp > 28) {
-                playlistId = "37i9dQZF1DX1g01L3R3A3Z"; 
-                moodText = "☀️ Summer Hits & Sunny Vibes";
-            } else {
-                playlistId = "37i9dQZF1DX4WYpdgoIcn6"; 
-                moodText = "☕ Calm Lofi Vibes";
-            }
+            let playlistId = isRaining ? "37i9dQZF1DXbvS33329OiJ" : (temp > 28 ? "37i9dQZF1DX1g01L3R3A3Z" : "37i9dQZF1DX4WYpdgoIcn6");
+            let moodText = isRaining ? "🌧️ Rainy Beats" : (temp > 28 ? "☀️ Summer Hits" : "☕ Calm Lofi");
 
             title.innerText = `🎵 Mood: ${moodText}`;
             container.innerHTML = `
@@ -176,82 +148,29 @@
             `;
         }
 
-        // Feature 4: AI Voice Assistant (Listens & Speaks)
-        const voiceBtn = document.getElementById('voiceBtn');
-        
-        function speakText(text) {
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel(); // Stop any active speech
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.rate = 0.95;
-                window.speechSynthesis.speak(utterance);
-            }
-        }
-
-        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            const recognition = new SpeechRecognition();
-            recognition.lang = 'en-US';
-
-            voiceBtn.addEventListener('click', () => {
-                voiceBtn.innerText = "🎙️ Listening...";
-                recognition.start();
-            });
-
-            recognition.onresult = (event) => {
-                const transcript = event.results[0][0].transcript;
-                voiceBtn.innerText = "🎤 Ask AI Voice";
-                document.getElementById('cityInput').value = transcript.replace('.', '');
-                
-                // Fetch weather and speak back
-                fetchWeather(true);
-            };
-
-            recognition.onerror = () => {
-                voiceBtn.innerText = "🎤 Ask AI Voice";
-                alert("Voice recognition error. Please try again.");
-            };
-        } else {
-            voiceBtn.style.display = "none"; // Hide if browser doesn't support
-        }
-
-        // Browser Notifications
-        document.getElementById('notifyBtn').addEventListener('click', () => {
-            if ("Notification" in window) {
-                Notification.requestPermission().then(permission => {
-                    if (permission === "granted") alert("Weather notifications enabled!");
-                });
-            }
-        });
-
-        // Main Weather Fetch Function
         async function fetchWeather(shouldSpeak = false) {
             const city = document.getElementById('cityInput').value.trim();
             const statusMsg = document.getElementById('statusMsg');
-            const content = document.getElementById('weatherContent');
 
             if (!city) return;
-            statusMsg.innerText = "Updating dashboard...";
+            statusMsg.innerText = "Fetching weather...";
 
             try {
-                const res = await fetch(`/api/weather?city=${city}`);
+                const res = await fetch(`/api/weather?city=${encodeURIComponent(city)}`);
                 const data = await res.json();
 
                 if (data.error) {
                     statusMsg.innerText = data.error;
-                    content.style.display = "none";
                     return;
                 }
 
                 statusMsg.innerText = "";
-                content.style.display = "grid";
 
                 const temp = data.current.temperature_2m;
                 const wind = data.current.wind_speed_10m;
                 const rain = data.current.rain;
                 const isRaining = rain > 0 || data.current.precipitation > 0;
 
-                // Update text UI
                 document.getElementById('cityName').innerText = `${data.city}, ${data.country}`;
                 document.getElementById('tempDisplay').innerText = `${temp}°C`;
                 document.getElementById('feelsLike').innerText = `${data.current.apparent_temperature}°C`;
@@ -260,18 +179,10 @@
                 document.getElementById('rain').innerText = `${rain} mm`;
                 document.getElementById('weatherDesc').innerText = isRaining ? "🌧️ Currently Raining" : "☀️ Clear / Dry";
 
-                // Trigger All Upgrades
                 updateBackground(isRaining, temp);
                 initMap(data.lat, data.lon, data.city);
                 updateMascotOutfit(temp, wind, rain);
                 updateSpotifyPlaylist(isRaining, temp);
-
-                // AI Voice Response
-                if (shouldSpeak) {
-                    const mood = isRaining ? "rainy beats" : (temp > 28 ? "summer hits" : "calm lofi");
-                    const speech = `It is currently ${temp} degrees and ${isRaining ? 'raining' : 'clear'} in ${data.city}. I recommend playing ${mood} on Spotify!`;
-                    speakText(speech);
-                }
 
             } catch (err) {
                 statusMsg.innerText = "Error connecting to backend server.";
@@ -279,10 +190,11 @@
         }
 
         document.getElementById('searchBtn').addEventListener('click', () => fetchWeather(false));
-window.addEventListener('DOMContentLoaded',() => {
-updateBackground(false,25);
-        fetchWeather(false);
-});
+
+        window.addEventListener('load', () => {
+            updateBackground(false, 25);
+            fetchWeather(false);
+        });
     </script>
 </body>
 </html>
